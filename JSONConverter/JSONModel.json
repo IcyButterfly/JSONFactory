@@ -1,0 +1,19 @@
+{
+    "name": "Binglin",
+    "gender": 0,
+    "appointment": null,
+    "age": null,
+    "logs": [{
+        "avator": "www.url.com",
+        "time": "2017-03-02 00:00:00",
+        "log": "12341234"
+    },{
+        "avator": "www.url.com",
+        "time": "2017-03-02 00:00:00",
+        "log": "12341234"
+    }],
+    "city": {
+        "cityId": 10098765,
+        "cityName": "成都"
+    }
+}
