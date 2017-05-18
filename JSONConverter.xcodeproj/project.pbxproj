@@ -17,6 +17,7 @@
 		D4A258141E680074004C1E3D /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A258131E680074004C1E3D /* JSON.swift */; };
 		D4A258181E6806A1004C1E3D /* JSONInfoParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A258171E6806A1004C1E3D /* JSONInfoParser.swift */; };
 		D4A7A5741E6903DD00995AB7 /* SwaggerJSONParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A7A5731E6903DD00995AB7 /* SwaggerJSONParser.swift */; };
+		D4AAD33E1ECD6D4100D4C268 /* SwaggerObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4AAD33D1ECD6D4100D4C268 /* SwaggerObject.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		D4A258131E680074004C1E3D /* JSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
 		D4A258171E6806A1004C1E3D /* JSONInfoParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONInfoParser.swift; sourceTree = "<group>"; };
 		D4A7A5731E6903DD00995AB7 /* SwaggerJSONParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwaggerJSONParser.swift; sourceTree = "<group>"; };
+		D4AAD33D1ECD6D4100D4C268 /* SwaggerObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwaggerObject.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +66,7 @@
 		D4A257FD1E67CAF5004C1E3D /* JSONConverter */ = {
 			isa = PBXGroup;
 			children = (
+				D4AAD33C1ECD6D3200D4C268 /* Swagger */,
 				D4A257FE1E67CAF5004C1E3D /* AppDelegate.swift */,
 				D4A258001E67CAF5004C1E3D /* ViewController.swift */,
 				D4A258111E67FE1A004C1E3D /* JSONAssembler.swift */,
@@ -77,6 +80,14 @@
 				D4A258071E67CAF5004C1E3D /* Info.plist */,
 			);
 			path = JSONConverter;
+			sourceTree = "<group>";
+		};
+		D4AAD33C1ECD6D3200D4C268 /* Swagger */ = {
+			isa = PBXGroup;
+			children = (
+				D4AAD33D1ECD6D4100D4C268 /* SwaggerObject.swift */,
+			);
+			path = Swagger;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -159,6 +170,7 @@
 				D4A258181E6806A1004C1E3D /* JSONInfoParser.swift in Sources */,
 				D4A258141E680074004C1E3D /* JSON.swift in Sources */,
 				D4A7A5741E6903DD00995AB7 /* SwaggerJSONParser.swift in Sources */,
+				D4AAD33E1ECD6D4100D4C268 /* SwaggerObject.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

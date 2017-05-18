@@ -33,7 +33,7 @@ class ViewController: NSViewController {
                     let explained = JSONInfoParser.parseJSON(from: dic, name: "<#Root#>")
                     print(explained)
                     
-                    MappingAceAssembler.assemble(jsonInfos: explained, toDocument: "/Users/Binglin/Desktop/JSONConverter/JSONConverter/JSONDocument")
+                    MappingAceAssembler.assemble(jsonInfos: explained, toDocument: "/Users/Binglin/Desktop/JSONResult")
                 }
                 
             }catch (let e) {
