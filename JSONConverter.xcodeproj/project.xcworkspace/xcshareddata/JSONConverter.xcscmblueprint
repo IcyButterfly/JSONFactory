@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "C8330219BFD52EAE546A661AEE6F2AFFF1D0AEA5",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "84C2F619A6E24816DEC0CBE8E48F77EFD6771A00" : 9223372036854775807,
+    "C8330219BFD52EAE546A661AEE6F2AFFF1D0AEA5" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "5BF061D8-185F-4D90-8476-DECDF1460046",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "84C2F619A6E24816DEC0CBE8E48F77EFD6771A00" : "JSONFactory\/MappingAce\/",
+    "C8330219BFD52EAE546A661AEE6F2AFFF1D0AEA5" : "JSONFactory\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "JSONConverter",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "JSONConverter.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/IcyButterfly\/MappingAce.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "84C2F619A6E24816DEC0CBE8E48F77EFD6771A00"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:IcyButterfly\/JSONFactory.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "C8330219BFD52EAE546A661AEE6F2AFFF1D0AEA5"
+    }
+  ]
+}
