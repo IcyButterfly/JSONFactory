@@ -84,7 +84,7 @@ class ViewController: NSViewController {
                 }
                 swagger.parameterObjects = sparameterObj
                 
-                
+                analyzeTags(in: swagger)
                 
                 //definitions 里的entity 定义
                 
@@ -98,6 +98,73 @@ class ViewController: NSViewController {
             }
         }
     }
+    
+    
+    func analyzeTags(in swagger: SwaggerObject) {
+        
+        var tags = Set<String>()
+        
+        guard let paths = swagger.pathObjects else {
+            return
+        }
+       
+        for pathObj in paths {
+            
+            if let operation = pathObj.operation, let optTags = operation.tags {
+                
+                tags = tags.union(optTags)
+            }
+        }
+    
+        var tagsMap = [String: [SwaggerPathObject]](minimumCapacity: tags.count)
+        
+        for item in tags {
+            tagsMap.updateValue([SwaggerPathObject](), forKey: item)
+        }
+        
+        for pathObj in paths {
+
+            if let operation = pathObj.operation, let optTags = operation.tags {
+                
+                for tag in optTags {
+                    
+                    if var paths = tagsMap[tag] {
+                        paths.append(pathObj)
+                        tagsMap[tag] = paths
+                        print(paths)
+                    }
+                }
+            }
+        }
+        
+        for (tag, tagPathes) in tagsMap {
+            print("😄😄", tag)
+            
+            for pathObj in tagPathes {
+                
+                /**
+                 /user/devices/binding
+                 /user/devices/{type}
+                 */
+                let path = pathObj.path
+                
+                if let range = path.range(of: "{") {
+                    
+                    let str = path.substring(to: range.lowerBound)
+                    let parameter = path.substring(from: range.upperBound).replacingOccurrences(of: "}", with: "")
+                    print("🍎", parameter)
+                    
+                    let pathesName = str.components(separatedBy: "/").joined(separator: "_")
+                    print("--------------------------", pathesName)
+                }else {
+                    let pathesName = path.components(separatedBy: "/").joined(separator: "_")
+                    print("--------------------------", pathesName)
+                }
+                
+            }
+        }
+    }
+    
     
     func transferJSONMode() {
         

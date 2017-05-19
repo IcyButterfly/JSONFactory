@@ -9,12 +9,12 @@
 import Foundation
 
 // ----------------------------------------------------------------
-struct SwaggerMainInfo {
-    
-    var paths: [PathItemObject]
-    var parameters: [ParameterObject]
-    var definitions: [DefinitionObject]
-}
+//struct SwaggerMainInfo {
+//    
+//    var paths: [PathItemObject]
+//    var parameters: [ParameterObject]
+//    var definitions: [DefinitionObject]
+//}
 
 struct SwaggerPathObject {
     var path: String
@@ -50,6 +50,7 @@ struct SwaggerObject: Mapping {
     
     var pathObjects: [SwaggerPathObject]?
     var parameterObjects: [SwaggerParameterObject]?
+    var definitionsObject: [DefinitionObject]?
 }
 
 struct InfoObject: Mapping {
