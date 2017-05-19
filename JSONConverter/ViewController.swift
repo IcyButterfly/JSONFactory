@@ -154,15 +154,40 @@ class ViewController: NSViewController {
                     let parameter = path.substring(from: range.upperBound).replacingOccurrences(of: "}", with: "")
                     print("🍎", parameter)
                     
-                    let pathesName = str.components(separatedBy: "/").joined(separator: "_")
-                    print("--------------------------", pathesName)
+                    
+                    let pathesName = generatePath(pathName: str).joined(separator: "")
+                    
+                    print("--------------------------", pathesName, str)
+                    
+                    
                 }else {
-                    let pathesName = path.components(separatedBy: "/").joined(separator: "_")
-                    print("--------------------------", pathesName)
+                    
+                    let pathesName = generatePath(pathName: path).joined(separator: "")
+                    print("--------------------------", pathesName, path)
+                    
+                    
                 }
+                
                 
             }
         }
+    }
+    
+    func generatePath(pathName: String) -> [String] {
+        
+        
+        let r = pathName.components(separatedBy: "/").filter { (s) -> Bool in
+            return s.characters.count > 0
+        }
+        
+        let caped = r.enumerated().map { (offset, ele) -> String in
+            if offset == 0 {
+                return ele
+            }
+            return ele.capitalized
+        }
+
+        return caped
     }
     
     
