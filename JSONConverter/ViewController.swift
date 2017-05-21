@@ -45,7 +45,6 @@ class ViewController: NSViewController {
                 
                 guard let paths = dic["paths"] as? [String: [String: Any]] else { return }
                 
-               
                 // paths
                 var pathObjects: [SwaggerPathObject] = []
                 
@@ -131,7 +130,7 @@ class ViewController: NSViewController {
                     if var paths = tagsMap[tag] {
                         paths.append(pathObj)
                         tagsMap[tag] = paths
-                        print(paths)
+//                        print(paths)
                     }
                 }
             }
@@ -155,15 +154,99 @@ class ViewController: NSViewController {
                     print("🍎", parameter)
                     
                     
-                    let pathesName = generatePath(pathName: str).joined(separator: "")
+                    let pathesName = generatePathComponent(pathName: str).enumerated().map({ (offset, elem) -> String in
+                        if offset == 0 {
+                            return elem
+                        }
+                        return elem.capitalized
+                        
+                    }).joined(separator: "")
                     
-                    print("--------------------------", pathesName, str)
+//                    print("--------------------------", pathesName, str)
                     
+                    if let parameters = pathObj.operation?.parameters {
+                        
+                    
+                        let paramObjects = parameters.filter({ (obj) -> Bool in
+                        
+                            if let `in` = obj.in {
+                                return `in` == .path
+                            }
+                            return false
+                        })
+                        
+                        let pathParameter = paramObjects.flatMap({ (obj) -> String? in
+                            guard let name = obj.name, let type = obj.type?.swiftType() else {
+                                return nil
+                            }
+                            
+                            return name + ": " + type
+                        })
+                        
+                        var funcName = ""
+                        
+                        if let descrip = pathObj.operation?.description {
+                            funcName += "// \(descrip)"
+                        }
+                        
+                        if let summary = pathObj.operation?.summary {
+                            funcName += "// \(summary)"
+                        }
+                        
+                        funcName += "\n"
+                        funcName += "fileprivate static func \(pathesName)("
+                        funcName += pathParameter.joined(separator: ", ")
+                        funcName += ") -> Path {\n"
+                        funcName += "    return "
+                        
+                        
+                        var pathReturn = path
+                        
+                        let names = paramObjects.flatMap({ $0.name })
+                        
+                        for name in names {
+                            pathReturn = pathReturn.replacingOccurrences(of: "{\(name)}", with: "\\(\(name))")
+                        }
+                        
+                        funcName += "Path(path: \"\(pathReturn)\""
+                        
+                        funcName += "\n}"
+
+                        print("\n")
+                        print("\n")
+                        print("----------------------------------------------------")
+                        print(funcName)
+                        print("----------------------------------------------------")
+                    }
                     
                 }else {
                     
-                    let pathesName = generatePath(pathName: path).joined(separator: "")
-                    print("--------------------------", pathesName, path)
+                    let pathesName = generatePathComponent(pathName: path).enumerated().map({ (offset, elem) -> String in
+                        if offset == 0 {
+                            return elem
+                        }
+                        return elem.capitalized
+                        
+                    }).joined(separator: "")
+                    
+                    var pathCode = ""
+                    
+                    if let descrip = pathObj.operation?.description {
+                        pathCode += "// \(descrip)"
+                    }
+                    
+                    if let summary = pathObj.operation?.summary {
+                        pathCode += "// \(summary)"
+                    }
+                    
+                    pathCode += "\n"
+                    pathCode += "fileprivate static let \(pathesName) = Path(path: \"\(path)\")"
+
+                    print("\n")
+                    print("\n")
+                    print("----------------------------------------------------")
+                    print(pathCode)
+                    print("----------------------------------------------------")
                     
                     
                 }
@@ -173,21 +256,14 @@ class ViewController: NSViewController {
         }
     }
     
-    func generatePath(pathName: String) -> [String] {
+    func generatePathComponent(pathName: String) -> [String] {
         
         
         let r = pathName.components(separatedBy: "/").filter { (s) -> Bool in
             return s.characters.count > 0
         }
-        
-        let caped = r.enumerated().map { (offset, ele) -> String in
-            if offset == 0 {
-                return ele
-            }
-            return ele.capitalized
-        }
 
-        return caped
+        return r
     }
     
     

@@ -127,6 +127,23 @@ enum ParameterType: String, EnumString {
     case boolean = "boolean"
     case array   = "array"
     case file    = "file"
+    
+    func swiftType() -> String {
+        switch self {
+        case .string:
+            return "String"
+        case .number:
+            return "NSNumber"
+        case .integer:
+            return "Int"
+        case .boolean:
+            return "Bool"
+        case .array:
+            return "[]"
+        case .file:
+            return "String"
+        }
+    }
 }
 
 struct SchemaObject: Mapping {
