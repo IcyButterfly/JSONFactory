@@ -92,10 +92,12 @@ class ViewController: NSViewController {
                 if let definitions = dic["definitions"] as? [String: [String: Any]] {
                     
                     let defObj = definitions.map({ (key, value) -> SwaggerDefinitionObject in
-                        SwaggerDefinitionObject(key: key, definition: DefinitionObject(fromDic: value))
+                        SwaggerDefinitionObject(key: key, definition: SchemaObject(fromDic: value))
                     })
                     
                     swagger.definitionsObject = defObj
+                    
+                    analyzeDefinition(swagger: swagger)
                 }
                 
                 
@@ -261,14 +263,14 @@ class ViewController: NSViewController {
         }
     }
     
-    
+    // TODO 解析definition -> Entity
     func analyzeDefinition(swagger: SwaggerObject) {
         
         guard let definitionsObjs = swagger.definitionsObject else { return }
         
         for obj in definitionsObjs {
             
-            if let def = obj.definition {
+            if let def = obj.definition, let properties = def.propertiesObj {
                 
             }
         }

@@ -30,7 +30,7 @@ struct SwaggerParameterObject {
 
 struct SwaggerDefinitionObject {
     var key: String
-    var definition: DefinitionObject?
+    var definition: SchemaObject?
 }
 
 
@@ -151,7 +151,7 @@ enum ParameterType: String, EnumString {
     }
 }
 
-struct SchemaObject: Mapping {
+struct SchemaObject: Mapping, KeyMapping {
     var ref: String?// - As a JSON Reference
     var format: String? // (See Data Type Formats for further details)
     var title: String?//
@@ -174,7 +174,15 @@ struct SchemaObject: Mapping {
     var `enum`: [String]?
     var type: String?
     
+    var propertiesObj: [SchemaObject]?
 //    var items: [String]?
+    
+    static func mappedKeyFor(key: String) -> String? {
+        if key == "ref" {
+            return "$ref"
+        }
+        return nil
+    }
 }
 
 enum ItemObjectType: String, EnumString {
