@@ -28,6 +28,11 @@ struct SwaggerParameterObject {
     var parameter: ParameterObject
 }
 
+struct SwaggerDefinitionObject {
+    var key: String
+    var definition: DefinitionObject?
+}
+
 
 // ----------------------------------------------------------------
 struct SwaggerObject: Mapping {
@@ -50,7 +55,7 @@ struct SwaggerObject: Mapping {
     
     var pathObjects: [SwaggerPathObject]?
     var parameterObjects: [SwaggerParameterObject]?
-    var definitionsObject: [DefinitionObject]?
+    var definitionsObject: [SwaggerDefinitionObject]?
 }
 
 struct InfoObject: Mapping {
@@ -168,6 +173,8 @@ struct SchemaObject: Mapping {
     var required: Bool?
     var `enum`: [String]?
     var type: String?
+    
+//    var items: [String]?
 }
 
 enum ItemObjectType: String, EnumString {

@@ -88,8 +88,15 @@ class ViewController: NSViewController {
                 //definitions 里的entity 定义
                 
                 
-                
                 //definition  api response里的entity
+                if let definitions = dic["definitions"] as? [String: [String: Any]] {
+                    
+                    let defObj = definitions.map({ (key, value) -> SwaggerDefinitionObject in
+                        SwaggerDefinitionObject(key: key, definition: DefinitionObject(fromDic: value))
+                    })
+                    
+                    swagger.definitionsObject = defObj
+                }
                 
                 
             }catch (let e) {
@@ -250,7 +257,18 @@ class ViewController: NSViewController {
                     
                     
                 }
-                
+            }
+        }
+    }
+    
+    
+    func analyzeDefinition(swagger: SwaggerObject) {
+        
+        guard let definitionsObjs = swagger.definitionsObject else { return }
+        
+        for obj in definitionsObjs {
+            
+            if let def = obj.definition {
                 
             }
         }
