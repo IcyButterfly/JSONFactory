@@ -108,6 +108,9 @@ class ViewController: NSViewController {
         }
     }
     
+    func getPathResponse(in swagger: SwaggerObject) {
+        
+    }
     
     func analyzeTags(in swagger: SwaggerObject) {
         
@@ -131,6 +134,9 @@ class ViewController: NSViewController {
             tagsMap.updateValue([SwaggerPathObject](), forKey: item)
         }
         
+        
+        let definitionMapping: [String: String] = ["Result": "Any"]
+        
         for pathObj in paths {
 
             if let operation = pathObj.operation, let optTags = operation.tags {
@@ -143,14 +149,47 @@ class ViewController: NSViewController {
                     }
                 }
             }
+            
+            
+            
+            if let responses = pathObj.operation?.responsesObj {
+                
+                print("\n\n\n🍃🍃🍃🍃🍃🍃🍃🍃🍃🍃🍃🍃🍃🍃🍃🍃🍃🍃")
+                print(responses.ref ?? "")
+                
+                if let all = responses.allOf, all.count == 1 && all[0].ref != "#/definition/Result" {
+                    print(pathObj.path , "Any")
+                }
+                
+                if let all = responses.allOf {
+                    
+                    for item in all {
+                        
+                        if let properties = item.propertiesObjs {
+                            
+                            for p in properties {
+                                
+                                
+                                print("Path: ",pathObj.path, "name", p.key, "type", p.definition?.type ,   p.definition?.ref ?? "")
+                                
+                                
+                                if let type = p.definition?.type, type == "array" {
+                                    print("array item is: ", p.definition?.items?.ref)
+                                }
+                            }
+                        }
+                    }
+                }
+                print("🍃🍃🍃🍃🍃🍃🍃🍃🍃🍃🍃🍃🍃🍃🍃🍃🍃🍃")
+            }
         }
         
         for (tag, tagPathes) in tagsMap {
             print("😄😄", tag)
             
-            let tagFileName = "\(tag).Path.swift"
+            let tagFileName = "\(tag)ServiceImpl.swift"
             var tagPath = "//\n"
-            tagPath += "// \(tag).Path.swift\n"
+            tagPath += "// \(tag)ServiceImpl.swift\n"
             tagPath += "//\n"
             tagPath += "// Create by JSONConverter\n"
             tagPath += "//\n\n\n"
@@ -174,7 +213,7 @@ class ViewController: NSViewController {
                     print("🍎", parameter)
                     
                     
-                    let pathesName = generatePathComponent(pathName: str).enumerated().map({ (offset, elem) -> String in
+                    let pathesName = generatePathComponent(pathName: str, tagName: tag).enumerated().map({ (offset, elem) -> String in
                         if offset == 0 {
                             return elem
                         }
@@ -231,7 +270,7 @@ class ViewController: NSViewController {
                             pathReturn = pathReturn.replacingOccurrences(of: "{\(name)}", with: "\\(\(name))")
                         }
                         
-                        funcName += "Path(path: \"\(pathReturn)\""
+                        funcName += "Path(path: \"\(pathReturn)\")"
                         funcName += "\n"
                         funcName += whiteTab
                         funcName += "}"
@@ -243,7 +282,7 @@ class ViewController: NSViewController {
                     
                 }else {
                     
-                    let pathesName = generatePathComponent(pathName: path).enumerated().map({ (offset, elem) -> String in
+                    let pathesName = generatePathComponent(pathName: path, tagName: tag).enumerated().map({ (offset, elem) -> String in
                         if offset == 0 {
                             return elem
                         }
@@ -274,20 +313,22 @@ class ViewController: NSViewController {
             }
             
             tagPath += "}"
-            print("✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n")
-            print(tagPath)
+//            print("✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n")
+//            print(tagPath)
             
             
             do {
-                try tagPath.write(toFile: "/Users/Binglin/Documents/MyselfProjects/JSONFactory/CodeFactory/\(tagFileName)", atomically: true, encoding: String.Encoding.utf8)
+                try tagPath.write(toFile: "/Users/Binglin/Documents/MyselfProjects/JSONFactory/CodeFactory/Service/\(tagFileName)", atomically: true, encoding: String.Encoding.utf8)
             }
             catch let err {
                 print(err)
             }
             
-            print("✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n")
+//            print("✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n")
         }
     }
+    
+    
     
     // TODO 解析definition -> Entity
     func analyzeDefinition(swagger: SwaggerObject) {
@@ -300,25 +341,128 @@ class ViewController: NSViewController {
                 
                 print("\n")
                 print("\n")
-                print("🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎\n", obj.key, def.description ?? "nil" , obj.definition?.type ?? "nil", "\n")
+                print("🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎\n", obj.key, def.description ?? "" , obj.definition?.type ?? "", "\n")
                 
-                if let properties = def.propertiesObjs {
-                    
-                    for prop in properties {
-                        
-                        print("\(prop.key)", prop.definition?.type ?? "nil", prop.definition?.description ?? "nil")
-                        
-                    }
+                var entityName = obj.key
+                
+                
+                if !entityName.lowercased().contains("entity") {
+                    entityName += "Entity"
                 }
+                
+                if let type = obj.definition?.type {
+                    
+                    if type == "string" {
+                        
+                        var structObjectCode = "//\n// \(entityName).swift\n//\n\n"
+                        structObjectCode += "typealias \(entityName) = String"
+                        
+                        print("🍎----------------------------🍎")
+                        print(structObjectCode)
+                        print("🍎----------------------------🍎")
+                        
+                    }else if type == "object" {
+                        
+                        var structObjectCode = "//\n// \(entityName).swift\n//\n\n"
+                        
+                        structObjectCode += "import MappingAce\n\n"
+                        
+                        if let desc = def.description {
+                            structObjectCode += "/// \(desc)\n"
+                        }
+                        structObjectCode += "public struct \(entityName): Mapping {\n"
+                        
+                        let whiteCode = "    "
+                        
+                        if let properties = def.propertiesObjs {
+                            
+                            for prop in properties {
+                                
+                                print("\(prop.key)", prop.definition?.type ?? "", prop.definition?.description ?? "")
+                                
+                                var isRequired = false
+                                
+                                if let require = prop.definition?.required {
+                                    isRequired = require
+                                }
+                                
+                                let type = prop.definition?.type
+                                
+                                if let type = type {
+                                    
+                                    if let desc = prop.definition?.description {
+                                        structObjectCode += "\n"
+                                        structObjectCode += whiteCode
+                                        structObjectCode += "//\(desc)\n"
+                                    }else {
+                                        structObjectCode += "\n"
+                                    }
+                                    
+                                    structObjectCode += whiteCode
+                                    structObjectCode += "public var \(prop.key): "
+                                    
+                                    switch type {
+                                    case "integer":
+                                        structObjectCode += "Int"
+                                    case "string":
+                                        structObjectCode += "String"
+                                    case "boolean":
+                                        structObjectCode += "Bool"
+                                    case "number":
+                                        
+                                        if prop.definition?.format == "double" {
+                                            structObjectCode += "Double"
+                                        }else {
+                                            structObjectCode += "NSNumber"
+                                        }
+                                    case "array":
+                                        
+                                        if let items = prop.definition?.items, let ref = items.ref {
+                                            
+                                            if let className = ref.components(separatedBy: "/").last {
+                                                structObjectCode += "[\(className)]"
+                                            }
+                                        }
+                                        break
+                                    default:
+                                        break
+                                    }
+                                    if isRequired == false {
+                                        structObjectCode += "?\n"
+                                    }else{
+                                        structObjectCode += "\n"
+                                    }
+                                }else if type == nil {
+                                    let ref = prop.definition?.ref
+                                    print("type nil", ref)
+                                }
+                            }
+                        }
+                        
+                        structObjectCode += "}"
+                        print("🍎----------------------------🍎")
+                        print(structObjectCode)
+                        print("🍎----------------------------🍎")
+                        
+                        try? structObjectCode.write(toFile: "/Users/Binglin/Documents/MyselfProjects/JSONFactory/CodeFactory/Entity/\(entityName).swift", atomically: true, encoding: String.Encoding.utf8)
+                    }
+                    
+                }
+                
+              
+
             }
         }
     }
     
-    func generatePathComponent(pathName: String) -> [String] {
+    func generatePathComponent(pathName: String, tagName: String) -> [String] {
         
         
         let r = pathName.components(separatedBy: "/").filter { (s) -> Bool in
             return s.characters.count > 0
+        }
+        if r.count > 1 && r[0].lowercased() == tagName.lowercased() {
+            return r[1..<r.count].map{ $0 }
         }
 
         return r
@@ -353,14 +497,16 @@ class ViewController: NSViewController {
     func transferAction() {
         
         if let json = inputText.string {
-//            do {
+            do {
                 let data = json.data(using: .utf8)
                 
                 guard let d = data else {
                     return
                 }
                 
-                let json = try! JSONSerialization.jsonObject(with: d, options: JSONSerialization.ReadingOptions.allowFragments)
+                
+                
+                let json = try JSONSerialization.jsonObject(with: d, options: JSONSerialization.ReadingOptions.mutableContainers)
                 print(json)
                 
                 if let dic = json as? [String : Any] {
@@ -370,9 +516,9 @@ class ViewController: NSViewController {
                     self.outputTextView.string = txt
                 }
                 
-//            }catch (let e) {
-//                print(e)
-//            }
+            }catch (let e) {
+                print(e)
+            }
         }
     }
     

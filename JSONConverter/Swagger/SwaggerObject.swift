@@ -16,6 +16,10 @@ import Foundation
 //    var definitions: [DefinitionObject]
 //}
 
+struct SwaggerResponseObject {
+    
+}
+
 struct SwaggerPathObject {
     var path: String
     var method: String
@@ -98,10 +102,23 @@ struct OperationObject: Mapping {
     var produces: [String]?
     
     var parameters: [ParameterObject]
-    //var response: ResponseObject
+    var responsesObj: SchemaObject?
     
     var schemes: [String]?
     var deprecated: Bool?
+    
+    init(fromDic dic: [String: Any]) {
+        
+        var obj: OperationObject = MappingAny(fromDic: dic)
+                
+        if let response = dic["responses"] as? [String: Any],
+            let codeResult = response["200"] as? [String: Any],
+            let schema = codeResult["schema"] as? [String: Any] {
+            
+            obj.responsesObj = SchemaObject(fromDic: schema)
+        }
+        self = obj
+    }
     
 }
 
