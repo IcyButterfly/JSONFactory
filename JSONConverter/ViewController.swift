@@ -188,11 +188,17 @@ class ViewController: NSViewController {
             print("😄😄", tag)
             
             let tagFileName = "\(tag)ServiceImpl.swift"
+            
+            var serviceImplCode = "public class \(tag)ServiceImpl: NSObject {\n\n"
+            
             var tagPath = "//\n"
             tagPath += "// \(tag)ServiceImpl.swift\n"
             tagPath += "//\n"
             tagPath += "// Create by JSONConverter\n"
-            tagPath += "//\n\n\n"
+            tagPath += "//\n"
+            tagPath += "\n"
+            tagPath += "import ReactiveSwift\n"
+            tagPath += "\n"
             tagPath += "// \(tag)\n"
             tagPath += "extension Path {\n"
             
@@ -212,8 +218,9 @@ class ViewController: NSViewController {
                     let parameter = path.substring(from: range.upperBound).replacingOccurrences(of: "}", with: "")
                     print("🍎", parameter)
                     
+                    let pathesComponent = generatePathComponent(pathName: str, tagName: tag)
                     
-                    let pathesName = generatePathComponent(pathName: str, tagName: tag).enumerated().map({ (offset, elem) -> String in
+                    let pathesName = pathesComponent.enumerated().map({ (offset, elem) -> String in
                         if offset == 0 {
                             return elem
                         }
@@ -280,9 +287,12 @@ class ViewController: NSViewController {
                         tagPath += funcName
                     }
                     
-                }else {
+                }
+                else {
                     
-                    let pathesName = generatePathComponent(pathName: path, tagName: tag).enumerated().map({ (offset, elem) -> String in
+                    let pathesComponent = generatePathComponent(pathName: path, tagName: tag)
+                    
+                    let pathesName = pathesComponent.enumerated().map({ (offset, elem) -> String in
                         if offset == 0 {
                             return elem
                         }
@@ -295,12 +305,21 @@ class ViewController: NSViewController {
                     if let descrip = pathObj.operation?.description {
                         pathCode += whiteTab
                         pathCode += "// DESC: \(descrip)"
+                        
+                        serviceImplCode += "\n"
+                        serviceImplCode += whiteTab
+                        serviceImplCode += "// DESC: \(descrip)"
                     }
                     
                     if let summary = pathObj.operation?.summary {
                         pathCode += whiteTab
                         pathCode += "// SUMMARY: \(summary)"
+                        
+                        serviceImplCode += "\n"
+                        serviceImplCode += whiteTab
+                        serviceImplCode += "// SUMMARY: \(summary)"
                     }
+                    
                     
                     pathCode += "\n"
                     pathCode += whiteTab
@@ -309,12 +328,77 @@ class ViewController: NSViewController {
                     
                     tagPath += pathCode
                     
+                    let serviceFuncName = pathesComponent.map{ $0.capitalized }.joined()
+                
+
+                    serviceImplCode += "\n"
+                    serviceImplCode += whiteTab
+                    serviceImplCode += "public func \(pathObj.method)\(serviceFuncName)("
+                    
+                    var paramsBuilder = "\n" + whiteTab + whiteTab
+                    
+                    paramsBuilder += "var params: [String: Any] = [:]\n"
+                    
+                    if let parameters = pathObj.operation?.parameters {
+                        
+                        
+                        let paramObjects = parameters.filter({ (obj) -> Bool in
+                            
+                            if let `in` = obj.in {
+                                return `in` == .query
+                            }
+                            return false
+                        })
+                        
+                        let funcParameter = paramObjects.flatMap({ (obj) -> String? in
+                            guard let name = obj.name, let type = obj.type?.swiftType() else {
+                                return nil
+                            }
+                            
+                            return name + ": " + type
+                        })
+                        
+                        serviceImplCode += funcParameter.joined(separator: ", ")
+                        
+                        paramObjects.forEach({ (obj) in
+                            
+                            if let name = obj.name {
+                                paramsBuilder += whiteTab
+                                paramsBuilder += whiteTab
+                                paramsBuilder += "params[\"\(name)\"] = \(name)\n"
+                            }
+                        })
+                    }
+                    
+                    serviceImplCode += ") -> SignalProducer<Any, NSError> {"
+                    serviceImplCode += whiteTab
+                    serviceImplCode += paramsBuilder
+                    serviceImplCode += whiteTab
+                    serviceImplCode += whiteTab
+                    serviceImplCode += "return request(path: .\(pathesName), method: .\(pathObj.method), parameters: params)"
+                    serviceImplCode += "\n"
+                    serviceImplCode += whiteTab
+                    serviceImplCode += "}\n\n"
+                    
+                    
+                    print("✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n")
+                    print(serviceImplCode)
+                    print("✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n")
+                    
                 }
             }
             
             tagPath += "}"
 //            print("✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n")
 //            print(tagPath)
+            
+            tagPath += "\n\n\n"
+            
+            serviceImplCode += "}"
+            
+            tagPath += serviceImplCode
+//            tagPath += "}\n"
+            
             
             
             do {
@@ -444,7 +528,9 @@ class ViewController: NSViewController {
                         print(structObjectCode)
                         print("🍎----------------------------🍎")
                         
+                        /* TO OPEN
                         try? structObjectCode.write(toFile: "/Users/Binglin/Documents/MyselfProjects/JSONFactory/CodeFactory/Entity/\(entityName).swift", atomically: true, encoding: String.Encoding.utf8)
+                        */
                     }
                     
                 }
