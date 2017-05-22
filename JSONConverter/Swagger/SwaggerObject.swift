@@ -151,6 +151,20 @@ enum ParameterType: String, EnumString {
     }
 }
 
+struct JSONSchemaObject: Mapping, KeyMapping {
+    
+    var ref: String?
+    var type: String?
+    
+    static func mappedKeyFor(key: String) -> String? {
+        if key == "ref" {
+            return "$ref"
+        }
+        return nil
+    }
+}
+
+
 struct SchemaObject: Mapping, KeyMapping {
     var ref: String?// - As a JSON Reference
     var format: String? // (See Data Type Formats for further details)
@@ -174,14 +188,33 @@ struct SchemaObject: Mapping, KeyMapping {
     var `enum`: [String]?
     var type: String?
     
-    var propertiesObj: [SchemaObject]?
-//    var items: [String]?
+    var propertiesObjs: [SwaggerDefinitionObject]?
+    
+    var items: JSONSchemaObject?
+    var allOf: [SchemaObject]?
     
     static func mappedKeyFor(key: String) -> String? {
         if key == "ref" {
             return "$ref"
         }
         return nil
+    }
+    
+    init(fromDic dic: [String: Any]) {
+        
+        var obj: SchemaObject = MappingAny(fromDic: dic)
+        
+        if let properties = dic["properties"] as? [String: [String: Any]] {
+            
+            let propertiesObjs = properties.map({ (key, value) -> SwaggerDefinitionObject in
+                
+                let schema = SchemaObject(fromDic: value)
+                return SwaggerDefinitionObject(key: key, definition: schema)
+            })
+            
+            obj.propertiesObjs = propertiesObjs
+        }
+        self = obj
     }
 }
 

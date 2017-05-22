@@ -92,7 +92,8 @@ class ViewController: NSViewController {
                 if let definitions = dic["definitions"] as? [String: [String: Any]] {
                     
                     let defObj = definitions.map({ (key, value) -> SwaggerDefinitionObject in
-                        SwaggerDefinitionObject(key: key, definition: SchemaObject(fromDic: value))
+                        let schema = SchemaObject(fromDic: value)
+                        return SwaggerDefinitionObject(key: key, definition: schema)
                     })
                     
                     swagger.definitionsObject = defObj
@@ -139,7 +140,6 @@ class ViewController: NSViewController {
                     if var paths = tagsMap[tag] {
                         paths.append(pathObj)
                         tagsMap[tag] = paths
-//                        print(paths)
                     }
                 }
             }
@@ -147,6 +147,17 @@ class ViewController: NSViewController {
         
         for (tag, tagPathes) in tagsMap {
             print("😄😄", tag)
+            
+            let tagFileName = "\(tag).Path.swift"
+            var tagPath = "//\n"
+            tagPath += "// \(tag).Path.swift\n"
+            tagPath += "//\n"
+            tagPath += "// Create by JSONConverter\n"
+            tagPath += "//\n\n\n"
+            tagPath += "// \(tag)\n"
+            tagPath += "extension Path {\n"
+            
+            let whiteTab = "    "
             
             for pathObj in tagPathes {
                 
@@ -171,7 +182,6 @@ class ViewController: NSViewController {
                         
                     }).joined(separator: "")
                     
-//                    print("--------------------------", pathesName, str)
                     
                     if let parameters = pathObj.operation?.parameters {
                         
@@ -192,20 +202,24 @@ class ViewController: NSViewController {
                             return name + ": " + type
                         })
                         
-                        var funcName = ""
+                        var funcName = "\n"
                         
                         if let descrip = pathObj.operation?.description {
-                            funcName += "// \(descrip)"
+                            funcName += whiteTab
+                            funcName += "// DESC: \(descrip)"
                         }
                         
                         if let summary = pathObj.operation?.summary {
-                            funcName += "// \(summary)"
+                            funcName += whiteTab
+                            funcName += "// SUMMARY: \(summary)"
                         }
                         
                         funcName += "\n"
+                        funcName += whiteTab
                         funcName += "fileprivate static func \(pathesName)("
                         funcName += pathParameter.joined(separator: ", ")
                         funcName += ") -> Path {\n"
+                        funcName += whiteTab
                         funcName += "    return "
                         
                         
@@ -218,14 +232,13 @@ class ViewController: NSViewController {
                         }
                         
                         funcName += "Path(path: \"\(pathReturn)\""
+                        funcName += "\n"
+                        funcName += whiteTab
+                        funcName += "}"
                         
-                        funcName += "\n}"
+                        funcName += "\n"
 
-                        print("\n")
-                        print("\n")
-                        print("----------------------------------------------------")
-                        print(funcName)
-                        print("----------------------------------------------------")
+                        tagPath += funcName
                     }
                     
                 }else {
@@ -238,28 +251,41 @@ class ViewController: NSViewController {
                         
                     }).joined(separator: "")
                     
-                    var pathCode = ""
+                    var pathCode = "\n"
                     
                     if let descrip = pathObj.operation?.description {
-                        pathCode += "// \(descrip)"
+                        pathCode += whiteTab
+                        pathCode += "// DESC: \(descrip)"
                     }
                     
                     if let summary = pathObj.operation?.summary {
-                        pathCode += "// \(summary)"
+                        pathCode += whiteTab
+                        pathCode += "// SUMMARY: \(summary)"
                     }
                     
                     pathCode += "\n"
+                    pathCode += whiteTab
                     pathCode += "fileprivate static let \(pathesName) = Path(path: \"\(path)\")"
-
-                    print("\n")
-                    print("\n")
-                    print("----------------------------------------------------")
-                    print(pathCode)
-                    print("----------------------------------------------------")
+                    pathCode += "\n"
                     
+                    tagPath += pathCode
                     
                 }
             }
+            
+            tagPath += "}"
+            print("✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n")
+            print(tagPath)
+            
+            
+            do {
+                try tagPath.write(toFile: "/Users/Binglin/Documents/MyselfProjects/JSONFactory/CodeFactory/\(tagFileName)", atomically: true, encoding: String.Encoding.utf8)
+            }
+            catch let err {
+                print(err)
+            }
+            
+            print("✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n")
         }
     }
     
@@ -270,8 +296,20 @@ class ViewController: NSViewController {
         
         for obj in definitionsObjs {
             
-            if let def = obj.definition, let properties = def.propertiesObj {
+            if let def = obj.definition {
                 
+                print("\n")
+                print("\n")
+                print("🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎\n", obj.key, def.description ?? "nil" , obj.definition?.type ?? "nil", "\n")
+                
+                if let properties = def.propertiesObjs {
+                    
+                    for prop in properties {
+                        
+                        print("\(prop.key)", prop.definition?.type ?? "nil", prop.definition?.description ?? "nil")
+                        
+                    }
+                }
             }
         }
     }
