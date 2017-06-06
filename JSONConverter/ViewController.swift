@@ -24,7 +24,7 @@ class ViewController: NSViewController {
         transfer.target = self
         transfer.action = #selector(transferAction)
         
-        transferYml()
+        //transferYml()
     }
     
     func transferYml() {

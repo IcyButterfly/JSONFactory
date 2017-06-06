@@ -80,7 +80,7 @@ struct MappingAceAssembler: JSONAssembler {
         
         let name = jsonInfo.name!
         
-        var code = "struct \(name): Mapping {\n"
+        var code = "public struct \(name): Mapping {\n"
         
         
         
@@ -94,7 +94,7 @@ struct MappingAceAssembler: JSONAssembler {
             
             if let defaultV = property.defaultValue {
                 defaultValue = " = \(defaultV)"
-                code = "struct \(name): InitMapping {\n"
+                code = "public struct \(name): InitMapping {\n"
             }
             else {
                 defaultValue = ""
@@ -107,7 +107,7 @@ struct MappingAceAssembler: JSONAssembler {
                 desc = ""
             }
             
-            code += "    var \(name): \(type)\(defaultValue) \(desc)\n"
+            code += "    public var \(name): \(type)\(defaultValue)? \(desc)\n"
             
         }
         code += "}\n"
